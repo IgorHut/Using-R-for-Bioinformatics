@@ -1,0 +1,85 @@
+---
+title: "Using R for Bioinformatics"
+author: "Igor Hut"
+date: "November 14, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Introductory remarks
+
+*This .Rmd document is heavily based on the **Little Book of R for Bioinformatics** by Avril Coghlan.*
+
+*In accordance with the original document the one that you are reading is also icensed under a [Creative Commons Attribution 3.0 License](https://creativecommons.org/licenses/by/3.0/)*
+
+**If you ever bump into this one, thanks Avril!**
+
+### So what is this about?
+
+- This will be  a simple introduction to bioinformatics, with a focus on genome analysis, using the R statistics software
+- I will focus on two R packages specificaly written for bioinformatics:
+    - [Bioconductor](http://www.bioconductor.org/)
+    - [SeqinR](https://cran.r-project.org/web/packages/seqinr/index.html)
+- **Bioconductor** actually contains several packages with many R functions for analysing biological data sets such as microarray data
+- **SeqinR** contains R functions for obtaining sequences from DNA and protein sequence databases, as well as for analysing DNA and protein sequences
+- Majority of examples presented in this document will be based on a genome analysis of organisms that cause neglected tropical deseases, such as: trachoma, leprosy, schistosomiasis, soil transmitted helminths, lymphatic filariasis, onchocerciasis, Buruli ulcer, yaws, Chagas disease, African trypanosomiasis, leishmaniasis, Dengue fever, rabies, Dracunculiasis (guinea-worm disease), and Fascioliasis. 
+
+## DNA Sequence Statistics
+
+### FASTA format
+
+The FASTA format is a simple and widely used format for storing biological (DNA or protein) sequences. It was first used by the FASTA program for sequence alignment. It begins with a single-line description starting with a ">" character, followed by lines of sequences.Here is an example of a FASTA file:
+
+>> A06852 183 residues
+MPRLFSYLLGVWLLLSQLPREIPGQSTNDFIKACGRELVRLWVEICGSVSWGRTALSLEE
+PQLETGPPAETMPSSITKDAEILKMMLEFVPNLPQELKATLSERQPSLRELQQSASKDSN
+LNFEEFKKIILNRQNEAEDKSLLELKNLGLDKHSRKKRLFRMTLSEKCCQVGCIRKDIAR
+LC
+
+### The NCBI sequence database
+
+The National Centre for Biotechnology Information [NCBI](www.ncbi.nlm.nih.gov) in the US maintains a huge database of all the DNA and protein sequence data that has been collected, the NCBI Sequence Database. This also a similar database in Europe, the European Molecular Biology Laboratory  Sequence Database [EMBL](www.ebi.ac.uk/embl), and also a similar database in Japan, the DNA Data Bank of Japan [DDBJ](www.ddbj.nig.ac.jp). These three databases exchange data every night, so at any one point in time, they contain almost identical data.
+
+Each sequence in the NCBI Sequence Database is stored in a separate record, and is assigned a unique identifier that can be used to refer to that sequence record. The identifier is known as an accession, and consists of a mixture of numbers and letters. For example, Dengue virus causes Dengue fever, which is classified as a neglected tropical disease by the WHO. by any one of four types of Dengue virus: DEN-1, DEN-2, DEN-3, and DEN-4. The NCBI accessions for the DNA sequences of the DEN-1, DEN-2, DEN-3, and DEN-4 Dengue viruses are `NC_001477`, `NC_001474`, `NC_001475` and `NC_002640`, respectively.
+
+*Note that because the NCBI Sequence Database, the EMBL Sequence Database, and DDBJ exchange data every night, the DEN-1 (and DEN-2, DEN-3, DEN-4) Dengue virus sequence will be present in all three databases, but it will have different accessions in each database, as they each use their own numbering systems for referring to their own sequence records.*
+
+#### Retrieving genome sequence data using SeqinR
+
+To retrieve a sequence with a particular NCBI accession, we can use the following R function - "getncbiseq()". Here is an example:
+
+```{r}
+library(seqinr)
+
+getncbiseq <- function(accession){
+  
+     require("seqinr") # this function requires the SeqinR R package
+     # first find which ACNUC database the accession is stored in:
+     dbs <- c("genbank","refseq","refseqViruses","bacterial")
+     numdbs <- length(dbs)
+     for (i in 1:numdbs)
+     {
+        db <- dbs[i]
+        choosebank(db)
+        # check if the sequence is in ACNUC database 'db':
+        resquery <- try(query(".tmpquery", paste("AC=", accession)), silent = TRUE)
+        if (!(inherits(resquery, "try-error")))
+        {
+           queryname <- "query2"
+           thequery <- paste("AC=",accession,sep = "")
+           query(`queryname`,`thequery`)
+           # see if a sequence was retrieved:
+           seq <- getSequence(query2$req[[1]])
+           closebank()
+           return(seq)
+        }
+        closebank()
+     }
+     print(paste("ERROR: accession",accession,"was not found"))
+}
+
+# Let's now use getncbiseq() to retrieve the sequence for the DEN-1 Dengue virus (accession NC_001477) from the NCBI Nucleotide database:
+# dengueseq <- getncbiseq("NC_001477")
+```
