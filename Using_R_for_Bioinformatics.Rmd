@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
     - [SeqinR](https://cran.r-project.org/web/packages/seqinr/index.html)
 - **Bioconductor** actually contains several packages with many R functions for analysing biological data sets such as microarray data
 - **SeqinR** contains R functions for obtaining sequences from DNA and protein sequence databases, as well as for analysing DNA and protein sequences
-- Majority of examples presented in this document will be based on a genome analysis of organisms that cause neglected tropical deseases, such as: trachoma, leprosy, schistosomiasis, soil transmitted helminths, lymphatic filariasis, onchocerciasis, Buruli ulcer, yaws, Chagas disease, African trypanosomiasis, leishmaniasis, Dengue fever, rabies, Dracunculiasis (guinea-worm disease), and Fascioliasis. 
+- Majority of examples presented in this document will be based on a genome analysis of organisms that cause neglected tropical deseases, such as: trachoma, leprosy, schistosomiasis, soil transmitted helminths, lymphatic filariasis, onchocerciasis, Buruli ulcer, yaws, Chagas disease, African trypanosomiasis, leishmaniasis, Dengue fever, rabies, Dracunculiasis (guinea-worm disease), and Fascioliasis.
 
 ## DNA Sequence Statistics
 
@@ -54,7 +54,7 @@ To retrieve a sequence with a particular NCBI accession, we can use the followin
 library(seqinr)
 
 getncbiseq <- function(accession){
-  
+
      require("seqinr") # this function requires the SeqinR R package
      # first find which ACNUC database the accession is stored in:
      dbs <- c("genbank","refseq","refseqViruses","bacterial")
@@ -83,3 +83,5 @@ getncbiseq <- function(accession){
 # Let's now use getncbiseq() to retrieve the sequence for the DEN-1 Dengue virus (accession NC_001477) from the NCBI Nucleotide database:
 # dengueseq <- getncbiseq("NC_001477")
 ```
+
+Just some jiberish
