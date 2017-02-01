@@ -83,5 +83,3 @@ getncbiseq <- function(accession){
 # Let's now use getncbiseq() to retrieve the sequence for the DEN-1 Dengue virus (accession NC_001477) from the NCBI Nucleotide database:
 # dengueseq <- getncbiseq("NC_001477")
 ```
-
-Just some jiberish
